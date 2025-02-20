@@ -1,5 +1,6 @@
 package com.techie.microservices.order;
 
+import com.techie.microservices.order.containers.KafkaContainersConfig;
 import com.techie.microservices.order.stubs.InventoryClientStub;
 import io.restassured.RestAssured;
 import org.hamcrest.Matchers;
@@ -10,15 +11,19 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+classes = { KafkaContainersConfig.class })
 @AutoConfigureWireMock(port = 0)
+@Testcontainers
 class OrderServiceApplicationTests {
 
 	@ServiceConnection
 	static MySQLContainer mySQLContainer = new MySQLContainer("mysql:8.3.0");
+
 	@LocalServerPort
 	private Integer port;
 
@@ -38,7 +43,12 @@ class OrderServiceApplicationTests {
                 {
                      "skuCode": "iphone_15",
                      "price": 1000,
-                     "quantity": 1
+                     "quantity": 1,
+                     "userDetails": {
+                     	"email": "test",
+                     	"firstName": "test",
+                     	"lastName": "test"
+                     }
                 }
                 """;
 		InventoryClientStub.stubInventoryCall("iphone_15", 1);
@@ -63,7 +73,12 @@ class OrderServiceApplicationTests {
                 {
                      "skuCode": "iphone_15",
                      "price": 1000,
-                     "quantity": 1000
+                     "quantity": 1000,
+                     "userDetails": {
+                     	"email": "test",
+                     	"firstName": "test",
+                     	"lastName": "test"
+                     }
                 }
                 """;
 		InventoryClientStub.stubInventoryCall("iphone_15", 1000);

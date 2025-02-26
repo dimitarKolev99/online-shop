@@ -5,6 +5,7 @@ import com.techie.microservices.order.dto.OrderRequest;
 import com.techie.microservices.order.event.OrderPlacedEvent;
 import com.techie.microservices.order.model.Order;
 import com.techie.microservices.order.repository.OrderRepository;
+import com.techie.microservices.order.util.Constants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -39,7 +40,7 @@ public class OrderService {
             orderPlacedEvent.setFirstName(orderRequest.userDetails().firstName());
             orderPlacedEvent.setLastName(orderRequest.userDetails().lastName());
             log.info("Start - Sending OrderPlacedEvent {} to Kafka topic order-placed", orderPlacedEvent);
-            kafkaTemplate.send("order-placed", orderPlacedEvent);
+            kafkaTemplate.send(Constants.ORDER_PLACED_TOPIC_NAME, orderPlacedEvent);
             log.info("End - Sending OrderPlacedEvent {} to Kafka topic order-placed", orderPlacedEvent);
         } else {
             throw new RuntimeException("Product with SkuCode " + orderRequest.skuCode() + " is not in stock");
